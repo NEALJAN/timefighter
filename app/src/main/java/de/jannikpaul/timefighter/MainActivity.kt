@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     var highscore = -1
 
+    var Name = ""
+
     fun highscoreSpeichern() {
         highscoresign()
         setSignVisibility(true)
@@ -50,8 +52,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun aktualisiereHighscore() {
+        loadName()
         val highscorefield = findViewById<TextView>(R.id.highscore)
-        highscorefield.text ="Highscore: $highscore"
+        highscorefield.text = "HighScore: $Name $highscore"
     }
 
     fun loadHighscore() {
@@ -59,6 +62,11 @@ class MainActivity : AppCompatActivity() {
         highscore = pref.getInt("highscore_key", -1)
 
         aktualisiereHighscore()
+    }
+
+    fun loadName() {
+        val pref: SharedPreferences = getSharedPreferences("Default", Context.MODE_PRIVATE)
+        Name = pref.getString("Name_key", "")!!
     }
 
     fun saveNewHighscore(score: Int) {
@@ -113,10 +121,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("Eingabe", "OnResume Main")
+        aktualisiereHighscore()
+    }
+
 //anfang code ausführung
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Log.d("Eingabe", "OnCreate")
 
         loadHighscore()
 
