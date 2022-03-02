@@ -10,16 +10,37 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class EnterNameActivity : AppCompatActivity() {
+
+    var highscore = -1
+
+    val gson = Gson()
+
+    val highscoreEntryTypeToken = object : TypeToken<MutableList<HighscoreEntry>>() {}.type
 
 
     fun speichereName(Name : String) {
 
+        val highscoreEntry = HighscoreEntry(highscore, Name)
+
         val meinePreferences: SharedPreferences = getSharedPreferences("Default", Context.MODE_PRIVATE)
+
+        val alteListe: String = meinePreferences.getString("Ente", "[]") ?: "[]"
+
+        val highScoreList = gson.fromJson(alteListe, highscoreEntryTypeToken) as MutableList<HighscoreEntry>
+
+        highScoreList.add(highscoreEntry)
+
+        val daten = gson.toJson(highScoreList)
+
         meinePreferences.edit {
             putString("Name_key", Name)
+            putString("Ente", daten)
             commit()
+
         }
 
     }
@@ -32,6 +53,7 @@ class EnterNameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_name)
+        highscore = intent.extras?.get("score") as Int
 
         val eingabeFeld = findViewById<EditText>(R.id.editTextTextPersonName)
         eingabeFeld.setOnKeyListener(object : View.OnKeyListener {

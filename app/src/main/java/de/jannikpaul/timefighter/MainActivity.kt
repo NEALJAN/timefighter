@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         highscore = punktestand
         aktualisiereHighscore()
         val intent = Intent(this, EnterNameActivity::class.java)
+        intent.putExtra("score", highscore)
         startActivity(intent)
     }
 
